@@ -1,49 +1,15 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
+import os
 
 app = FastAPI()
-
-html = """
-<!DOCTYPE html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
-
+BASE_DIR = os.path.dirname(__file__)
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
@@ -68,7 +34,7 @@ users_db = {
         "username": "user",
         "full_name": "User User",
         "email": "user@email.com",
-        "hashed_password": "fakehashedsecret",
+        "hashed_password": "fakehashed123",
         "disabled": False,
     },
 }
@@ -138,9 +104,12 @@ async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user
-@app.get("/")   
-async def get():
-    return HTMLResponse(html)
+@app.get("/")
+async def get_login():
+    return FileResponse(os.path.join(BASE_DIR, "static/login.html"))
+@app.get("/chat")   
+async def get_chat():
+    return FileResponse(os.path.join(BASE_DIR, "static/chat.html"))
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
     user = fake_decode_token(token)
