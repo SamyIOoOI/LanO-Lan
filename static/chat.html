@@ -1,20 +1,25 @@
 <!DOCTYPE html>
-    <head>
-        <title>Chat</title>
+    <head><link rel="stylesheet" href="/static/layout.css">
+        <title>LanO'Lan</title>
     </head>
     <body>
-        <h1>WebSocket Chat</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
+        <h1>LanO'Lan Chat</h1>
+        <h2>Logged in as: <span id="ws-id"></span></h2>
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Send</button>
         </form>
-        <ul id='messages'>
-        </ul>
+        <button onclick="clearchat()">Clear Chat</button>
+        <div class='scroll'>
+            <ul id='messages'>
+            </ul>
+        </div>
         <script>
             var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
+            document.querySelector('.scroll').scrollTop = 0
+            const scrollDiv = document.querySelector('.scroll')
             const token = sessionStorage.getItem('token')
+            document.querySelector("#ws-id").textContent = token;
             var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}?token=${token}`);
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
@@ -22,12 +27,17 @@
                 var content = document.createTextNode(event.data)
                 message.appendChild(content)
                 messages.appendChild(message)
+                scrollDiv.scrollTop = scrollDiv.scrollHeight
             };
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
                 ws.send(input.value)
                 input.value = ''
                 event.preventDefault()
+            }
+            function clearchat() {
+                document.getElementById('messages').innerHTML = ''
+                scrollDiv.scrollTop = scrollDiv.scrollHeight
             }
         </script>
     </body>

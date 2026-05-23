@@ -120,10 +120,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"User #{client_id} says: {data}")
+            await manager.broadcast(f"{user.username}: {data}")
     except WebSocketDisconnect: 
         manager.disconnect(websocket)
-        await manager.broadcast(f"User #{client_id} has left the chat")
+        await manager.broadcast(f"{user.username} has left the chat")
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

@@ -1,1 +1,4 @@
 <link rel="stylesheet" href="/static/layout.css">
+# json file based saved entries.
+# container with scrollbar for chat
+# local chat clear button
