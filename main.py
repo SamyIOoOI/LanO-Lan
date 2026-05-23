@@ -6,6 +6,7 @@ from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 import os
+import json
 
 app = FastAPI()
 BASE_DIR = os.path.dirname(__file__)
@@ -29,22 +30,11 @@ class ConnectionManager:
             await connection.send_text(message)
 manager = ConnectionManager()
 ## Security
-users_db = {
-    "user": {
-        "username": "user",
-        "full_name": "User User",
-        "email": "user@email.com",
-        "hashed_password": "fakehashed123",
-        "disabled": False,
-    },
-}
+with open(os.path.join(os.getcwd(), "users_db.json")) as f:
+    users_db = json.load(f)
 def fake_hash_password(password: str):
     return "fakehashed" + password
-
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
 class User(BaseModel):
     username: str
     email: str | None = None

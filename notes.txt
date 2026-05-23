@@ -1,0 +1,2 @@
+<link rel="stylesheet" href="/static/layout.css">
+# json file based saved entries.

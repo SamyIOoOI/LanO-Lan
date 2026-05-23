@@ -1,0 +1,9 @@
+{
+    "user": {
+        "username": "user",
+        "full_name": "User User",
+        "email": "user@email.com",
+        "hashed_password": "fakehashed123",
+        "disabled": false
+    }
+}
