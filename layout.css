@@ -1,0 +1,26 @@
+body{
+            background-color: firebrick;
+            margin: 0;
+        }
+        h1{
+            text-align: center;
+        }
+        h2{
+            color: white;
+            text-align: center;
+            text-decoration: none;
+        }
+        img{
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+        }
+        a {
+            text-decoration: none;
+}
+.imageflex{
+    display: flex;
+    background-color: rgb(75, 6, 6);
+    justify-content: center;
+    border: 1px solid black;
+}
