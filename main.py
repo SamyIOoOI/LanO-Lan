@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 import os
 import json
+import bcrypt
 
 app = FastAPI()
 BASE_DIR = os.path.dirname(__file__)
@@ -32,8 +33,9 @@ manager = ConnectionManager()
 ## Security
 with open(os.path.join(os.getcwd(), "users_db.json")) as f:
     users_db = json.load(f)
-def fake_hash_password(password: str):
-    return "fakehashed" + password
+def real_hash_password(password: str):
+    hashedpassword = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return hashedpassword
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 class User(BaseModel):
     username: str
@@ -82,9 +84,8 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     if not user_dict:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     user = UserInDB(**user_dict)
-    hashed_password = fake_hash_password(form_data.password)
-    if not hashed_password == user.hashed_password:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    if not bcrypt.checkpw(form_data.password.encode('utf-8'), user.hashed_password.encode('utf-8')):
+         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
     return {"access_token": user.username, "token_type": "bearer"}
 
