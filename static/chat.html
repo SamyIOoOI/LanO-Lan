@@ -14,20 +14,32 @@
             <ul id='messages'>
             </ul>
         </div>
+        <label for="files">Files</label>
+        <select id="files" name="Files"></select>
+        <button onclick="downloadFile()">Download</button>
+        <button onclick="uploadFile()">Upload File</button>
         <script>
             var client_id = Date.now()
             document.querySelector('.scroll').scrollTop = 0
             const scrollDiv = document.querySelector('.scroll')
+            const selectElement = document.getElementById('files')
             const token = sessionStorage.getItem('token')
             document.querySelector("#ws-id").textContent = token;
             var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}?token=${token}`);
             ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-                scrollDiv.scrollTop = scrollDiv.scrollHeight
+                if (event.data.startsWith("FILE_ADD:")) {
+                  const filename = event.data.split(":")[1]
+                  const newOption = new Option(filename, filename)
+                  selectElement.add(newOption)
+                 } 
+                else {
+                    var messages = document.getElementById('messages')
+                    var message = document.createElement('li')
+                    var content = document.createTextNode(event.data)
+                    message.appendChild(content)
+                    messages.appendChild(message)
+                    scrollDiv.scrollTop = scrollDiv.scrollHeight
+                }
             };
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
@@ -38,6 +50,25 @@
             function clearchat() {
                 document.getElementById('messages').innerHTML = ''
                 scrollDiv.scrollTop = scrollDiv.scrollHeight
+            }
+            function downloadFile(){
+                const filename = selectElement.value
+                if (filename) {
+                    window.location.href = `/download/${filename}`
+                }
+            }
+            function uploadFile() {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.onchange = async function() {
+                    const formData = new FormData()
+                    formData.append('file', input.files[0])
+                    await fetch('/uploadfiles/', {
+                        method: 'POST',
+                        body: formData
+                    })
+                }
+                input.click()
             }
         </script>
     </body>

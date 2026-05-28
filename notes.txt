@@ -1,2 +1,12 @@
-<link rel="stylesheet" href="/static/layout.css">
-# json file based saved entries.
+User Registeration Tkinter Application:
+append to users_db.json file ---> username and defaults
+---> stores password (variable) ---> hashes ---> stores hash on file
+Or could be done via webform
+
+result = subprocess.run(['arp', '-a'], capture_output=True, text=True)
+for line in result.stdout.splitlines():
+    if "dynamic" in line:
+        parts = line.split()
+        ip = parts[1].strip('()')
+        mac = parts[3]
+        Devices.append((ip, mac))

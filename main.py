@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException, status
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException, status, File, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
@@ -8,9 +8,18 @@ from pydantic import BaseModel
 import os
 import json
 import bcrypt
+import aiofiles
+import time
+import subprocess
 
 app = FastAPI()
 BASE_DIR = os.path.dirname(__file__)
+TEMP_DIR = os.path.join(os.getcwd(), "temp")
+Requests = []
+Halts = []
+Devices = []
+
+os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 class ConnectionManager:
     def __init__(self):
@@ -115,5 +124,19 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
     except WebSocketDisconnect: 
         manager.disconnect(websocket)
         await manager.broadcast(f"{user.username} has left the chat")
+@app.post("/uploadfiles/")
+async def create_upload_files(file: list[UploadFile]):
+    for f in file:
+        path = os.path.join(TEMP_DIR, f.filename)
+        async with aiofiles.open(path, 'wb') as out:
+            while chunk := await f.read(1024 * 1024):
+                await out.write(chunk)
+        await manager.broadcast(f"FILE_ADD:{f.filename}")
+    return {"filenames": [f.filename for f in file]}
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    path = os.path.join(TEMP_DIR, filename)
+    return FileResponse(path, filename=filename)
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
