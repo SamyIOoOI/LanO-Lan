@@ -18,7 +18,7 @@ TEMP_DIR = os.path.join(os.getcwd(), "temp")
 Requests = []
 Halts = []
 Devices = []
-
+online_users = []
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 class ConnectionManager:
@@ -117,12 +117,17 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
         await websocket.close(code=1008)
         return
     await manager.connect(websocket)
+    online_users.append(user.username)
+    await manager.broadcast(f"User_List:{json.dumps(online_users)}")
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(f"{user.username}: {data}")
+            coded_message = f'<span style="color: lightgreen;">{user.username}:</span> {data}'
+            await manager.broadcast(coded_message)
     except WebSocketDisconnect: 
         manager.disconnect(websocket)
+        online_users.remove(user.username)
+        await manager.broadcast(f"User_List:{json.dumps(online_users)}")
         await manager.broadcast(f"{user.username} has left the chat")
 @app.post("/uploadfiles/")
 async def create_upload_files(file: list[UploadFile]):

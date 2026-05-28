@@ -4,20 +4,26 @@
     </head>
     <body>
         <h1>LanO'Lan Chat</h1>
-        <h2>Logged in as: <span id="ws-id"></span></h2>
+        <h2>Logged in as: <span id="ws-id" style="color: lightskyblue"></span></h2>
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Send</button>
+            <button onclick="clearchat()">Clear Chat</button>
         </form>
-        <button onclick="clearchat()">Clear Chat</button>
         <div class='scroll'>
             <ul id='messages'>
             </ul>
         </div>
-        <label for="files">Files</label>
         <select id="files" name="Files"></select>
-        <button onclick="downloadFile()">Download</button>
-        <button onclick="uploadFile()">Upload File</button>
+        <div class="downup">
+            <button onclick="downloadFile()">Download</button>
+            <button onclick="uploadFile()">Upload File</button>
+        </div>
+        <h3 class="h3mob"">Currently Online</h3>
+        <div class="sidepanel">
+            <h3 class="h3pc">Currently Online</h3>
+            <ul id="online-users"></ul>
+        </div>
         <script>
             var client_id = Date.now()
             document.querySelector('.scroll').scrollTop = 0
@@ -32,11 +38,24 @@
                   const newOption = new Option(filename, filename)
                   selectElement.add(newOption)
                  } 
+                else if (event.data.startsWith("User_List:")) {
+                    const users = JSON.parse(event.data.split(":")[1])
+                    const onlineuserslist = document.getElementById('online-users')
+                    onlineuserslist.innerHTML = ''
+                    users.forEach(user => {
+                        const listItem = document.createElement('li')
+                        listItem.textContent = user
+                        listItem.onclick = function() {
+                            alert(`Coming Soon!`)
+                        }
+                        listItem.style.cursor = 'pointer'
+                        onlineuserslist.appendChild(listItem)
+                    })
+                }
                 else {
                     var messages = document.getElementById('messages')
                     var message = document.createElement('li')
-                    var content = document.createTextNode(event.data)
-                    message.appendChild(content)
+                    message.innerHTML = event.data
                     messages.appendChild(message)
                     scrollDiv.scrollTop = scrollDiv.scrollHeight
                 }

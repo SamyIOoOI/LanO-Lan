@@ -12,3 +12,19 @@ for line in result.stdout.splitlines():
         Devices.append((ip, mac))
 
 tt
+
+
+div.sidepanel {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    left: 0;
+    top: 0;
+    width: 90vh;
+    height: 40vh;
+    background-color: rgb(100, 4, 4);
+    color: rgb(66, 66, 172);
+    padding: 5px;
+    box-sizing: border-box;
+    margin: 4px;
+}
