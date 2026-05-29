@@ -22,6 +22,7 @@ online_users = []
 ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
+
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
@@ -146,6 +147,9 @@ async def create_upload_files(file: list[UploadFile]):
 async def download_file(filename: str):
     path = os.path.join(TEMP_DIR, filename)
     return FileResponse(path, filename=filename)
-
+@app.get("/files")
+async def available_files():
+    files = os.listdir(TEMP_DIR)
+    return {"files": files}
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

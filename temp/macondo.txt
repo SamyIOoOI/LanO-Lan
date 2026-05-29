@@ -1,0 +1,1 @@
+This is a project I've constructed before and do not need the components for as I already have them. My Overengineered school project!  (I asked about it in #Macondo-help beforehand). Another note, the hours might sound a bit rediclious as it was my first time dealing with an esp or arudino and I ran into many troubles. (I'll try to deinflate the hours regardless)

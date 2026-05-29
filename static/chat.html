@@ -37,6 +37,7 @@
                 const ipv4 = info.ipv4
                 const port = info.port
                 ws = new WebSocket(`ws://${ipv4}:${port}/ws/${client_id}?token=${token}`);
+                repopulatefiles()
                 ws.onmessage = function(event) {
                     if (event.data.startsWith("FILE_ADD:")) {
                         const filename = event.data.split(":")[1]
@@ -81,6 +82,15 @@
                 if (filename) {
                     window.location.href = `/download/${filename}`
                 }
+            }
+            function repopulatefiles(){
+                fetch('/files').then(r => r.json()).then(data => {
+                    selectElement.innerHTML = ''
+                    data.files.forEach(file => {
+                        const newOption = new Option(file, file)
+                        selectElement.add(newOption)
+                    })
+                })
             }
             function uploadFile() {
                 const input = document.createElement('input')
