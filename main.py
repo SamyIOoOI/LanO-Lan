@@ -146,6 +146,7 @@ async def create_upload_files(file: list[UploadFile]):
             while chunk := await f.read(1024 * 1024):
                 await out.write(chunk)
         await manager.broadcast(f"FILE_ADD:{f.filename}")
+        await asyncio.sleep(2)
         upload_status = "red"
         await manager.broadcast(f"Upload_Status:{upload_status}")
         await asyncio.sleep(2)
@@ -160,5 +161,6 @@ async def download_file(filename: str):
 async def available_files():
     files = os.listdir(TEMP_DIR)
     return {"files": files}
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

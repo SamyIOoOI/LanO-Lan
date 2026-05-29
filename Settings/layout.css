@@ -57,7 +57,7 @@ div.sidepanel {
     margin: 4px auto;
     font-size: 1.5rem;
 }
-@media (min-width: 768px){
+@media (min-width: 1024px){
     .h3pc{
         display: block;
     }
@@ -136,7 +136,7 @@ form{
     flex-direction: column;
     align-items: center;
 }
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
     .downup {
     display: flex !important;
     flex-direction: column !important;
