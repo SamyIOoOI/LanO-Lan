@@ -1,9 +1,6 @@
 {
     "user": {
         "username": "user",
-        "full_name": "User User",
-        "email": "user@email.com",
-        "hashed_password": "$2b$12$JyHReOPNxOaIQqq5bATeneG71mkUEgpFW6ejQ6DAO/LZ6zZOtuyNa",
-        "disabled": false
+        "hashed_password": "$2b$12$JyHReOPNxOaIQqq5bATeneG71mkUEgpFW6ejQ6DAO/LZ6zZOtuyNa"
     }
 }

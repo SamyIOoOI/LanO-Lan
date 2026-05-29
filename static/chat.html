@@ -79,8 +79,12 @@
             }
             function downloadFile(){
                 const filename = selectElement.value
-                if (filename) {
+                repopulatefiles()
+                if (filename in selectElement.options) {
                     window.location.href = `/download/${filename}`
+                }
+                else {
+                    alert('File was not found!')
                 }
             }
             function repopulatefiles(){
