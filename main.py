@@ -19,6 +19,7 @@ Requests = []
 Halts = []
 Devices = []
 online_users = []
+ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 class ConnectionManager:
@@ -99,6 +100,9 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     return {"access_token": user.username, "token_type": "bearer"}
 
 
+@app.get("/info")
+async def get_ipnport():
+    return {"ipv4": ipv4port[0], "port": ipv4port[1]}
 @app.get("/users/me")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],

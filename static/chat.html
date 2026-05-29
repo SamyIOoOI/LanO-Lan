@@ -31,35 +31,41 @@
             const selectElement = document.getElementById('files')
             const token = sessionStorage.getItem('token')
             document.querySelector("#ws-id").textContent = token;
-            var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}?token=${token}`);
-            ws.onmessage = function(event) {
-                if (event.data.startsWith("FILE_ADD:")) {
-                  const filename = event.data.split(":")[1]
-                  const newOption = new Option(filename, filename)
-                  selectElement.add(newOption)
-                 } 
-                else if (event.data.startsWith("User_List:")) {
-                    const users = JSON.parse(event.data.split(":")[1])
-                    const onlineuserslist = document.getElementById('online-users')
-                    onlineuserslist.innerHTML = ''
-                    users.forEach(user => {
-                        const listItem = document.createElement('li')
-                        listItem.textContent = user
-                        listItem.onclick = function() {
-                            alert(`Coming Soon!`)
-                        }
-                        listItem.style.cursor = 'pointer'
-                        onlineuserslist.appendChild(listItem)
-                    })
-                }
-                else {
-                    var messages = document.getElementById('messages')
-                    var message = document.createElement('li')
-                    message.innerHTML = event.data
-                    messages.appendChild(message)
-                    scrollDiv.scrollTop = scrollDiv.scrollHeight
-                }
-            };
+            var ws;
+            (async function() {
+                const info = await fetch('/info').then(r => r.json())
+                const ipv4 = info.ipv4
+                const port = info.port
+                ws = new WebSocket(`ws://${ipv4}:${port}/ws/${client_id}?token=${token}`);
+                ws.onmessage = function(event) {
+                    if (event.data.startsWith("FILE_ADD:")) {
+                        const filename = event.data.split(":")[1]
+                        const newOption = new Option(filename, filename)
+                        selectElement.add(newOption)
+                    } 
+                    else if (event.data.startsWith("User_List:")) {
+                        const users = JSON.parse(event.data.split(":")[1])
+                        const onlineuserslist = document.getElementById('online-users')
+                        onlineuserslist.innerHTML = ''
+                        users.forEach(user => {
+                            const listItem = document.createElement('li')
+                            listItem.textContent = user
+                            listItem.onclick = function() {
+                                alert(`Coming Soon!`)
+                            }
+                            listItem.style.cursor = 'pointer'
+                            onlineuserslist.appendChild(listItem)
+                        })
+                    }
+                    else {
+                        var messages = document.getElementById('messages')
+                        var message = document.createElement('li')
+                        message.innerHTML = event.data
+                        messages.appendChild(message)
+                        scrollDiv.scrollTop = scrollDiv.scrollHeight
+                    }
+                };
+            })()
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
                 ws.send(input.value)
