@@ -1,14 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap');
-.comic-relief-regular {
-  font-family: "Comic Relief", system-ui;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.comic-relief-bold {
-  font-family: "Comic Relief", system-ui;
-  font-weight: 700;
-  font-style: normal;
+@font-face {
+    font-family: "Comic Relief";
+    src: url("/Settings/Fonts/ComicRelief.ttf") format("truetype");
 }
 .h3pc{
     display: none;

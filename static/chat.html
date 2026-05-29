@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <head><link rel="stylesheet" href="/static/layout.css?v=<?php echo time(); ?>"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head><link rel="stylesheet" href="Settings/layout.css?v=<?php echo time(); ?>"><meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>LanO'Lan</title>
     </head>
     <body>
@@ -8,8 +8,8 @@
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Send</button>
-            <button onclick="clearchat()">Clear Chat</button>
         </form>
+        <button onclick="clearchat()">Clear Chat</button>
         <div class='scroll'>
             <ul id='messages'>
             </ul>
@@ -25,6 +25,10 @@
             <ul id="online-users"></ul>
         </div>
         <script>
+            if (!sessionStorage.getItem('token')){
+                alert("You need to be logged in to access the chat!")
+                window.location.href = "/"
+            }
             var client_id = Date.now()
             document.querySelector('.scroll').scrollTop = 0
             const scrollDiv = document.querySelector('.scroll')
@@ -38,11 +42,13 @@
                 const port = info.port
                 ws = new WebSocket(`ws://${ipv4}:${port}/ws/${client_id}?token=${token}`);
                 repopulatefiles()
+                joinSound()
                 ws.onmessage = function(event) {
                     if (event.data.startsWith("FILE_ADD:")) {
                         const filename = event.data.split(":")[1]
                         const newOption = new Option(filename, filename)
                         selectElement.add(newOption)
+                        uploadsound()
                     } 
                     else if (event.data.startsWith("User_List:")) {
                         const users = JSON.parse(event.data.split(":")[1])
@@ -70,17 +76,21 @@
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
                 ws.send(input.value)
+                smessagesound()
                 input.value = ''
                 event.preventDefault()
             }
             function clearchat() {
                 document.getElementById('messages').innerHTML = ''
                 scrollDiv.scrollTop = scrollDiv.scrollHeight
+                cchatsound()
             }
             function downloadFile(){
                 const filename = selectElement.value
                 repopulatefiles()
-                if (filename in selectElement.options) {
+                const fileok = Array.from(selectElement.options).some(option => option.value === filename)
+                if (fileok) {
+                    downloadsound()
                     window.location.href = `/download/${filename}`
                 }
                 else {
@@ -99,6 +109,7 @@
             function uploadFile() {
                 const input = document.createElement('input')
                 input.type = 'file'
+                input.accept = '*/*'
                 input.onchange = async function() {
                     const formData = new FormData()
                     formData.append('file', input.files[0])
@@ -108,6 +119,26 @@
                     })
                 }
                 input.click()
+            }
+            function smessagesound() {
+                const audio = new Audio("/Settings/Sounds/message.wav");
+                audio.play().catch(error => console.log(error));
+            }
+            function joinSound() {
+                const audio2 = new Audio("/Settings/Sounds/join.wav");
+                audio2.play().catch(error => console.log(error));
+            }
+            function cchatsound() {
+                const audio3 = new Audio("/Settings/Sounds/cchat.wav");
+                audio3.play().catch(error => console.log(error));
+            }
+            function uploadsound() {
+                const audio4 = new Audio("/Settings/Sounds/upload.mp3");
+                audio4.play().catch(error => console.log(error));
+            }
+            function downloadsound() {
+                const audio5 = new Audio("/Settings/Sounds/download.wav");
+                audio5.play().catch(error => console.log(error));
             }
         </script>
     </body>
