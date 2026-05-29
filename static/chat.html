@@ -68,6 +68,7 @@
                         var messages = document.getElementById('messages')
                         var message = document.createElement('li')
                         message.innerHTML = event.data
+                        smessagesound()
                         messages.appendChild(message)
                         scrollDiv.scrollTop = scrollDiv.scrollHeight
                     }
@@ -76,7 +77,6 @@
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
                 ws.send(input.value)
-                smessagesound()
                 input.value = ''
                 event.preventDefault()
             }
