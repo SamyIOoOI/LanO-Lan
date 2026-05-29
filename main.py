@@ -11,6 +11,7 @@ import bcrypt
 import aiofiles
 import time
 import subprocess
+import asyncio
 
 
 app = FastAPI()
@@ -22,6 +23,7 @@ Halts = []
 Devices = []
 online_users = []
 ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
+upload_status = "green"
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 app.mount("/Settings", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "Settings")), name="Settings")
@@ -135,12 +137,20 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
         await manager.broadcast(f"{user.username} has left the chat")
 @app.post("/uploadfiles/")
 async def create_upload_files(file: list[UploadFile]):
+    global upload_status
     for f in file:
         path = os.path.join(TEMP_DIR, f.filename)
         async with aiofiles.open(path, 'wb') as out:
+            upload_status = "yellow"
+            await manager.broadcast(f"Upload_Status:{upload_status}")
             while chunk := await f.read(1024 * 1024):
                 await out.write(chunk)
         await manager.broadcast(f"FILE_ADD:{f.filename}")
+        upload_status = "red"
+        await manager.broadcast(f"Upload_Status:{upload_status}")
+        await asyncio.sleep(2)
+        upload_status = "green"
+        await manager.broadcast(f"Upload_Status:{upload_status}")
     return {"filenames": [f.filename for f in file]}
 @app.get("/download/{filename}")
 async def download_file(filename: str):
@@ -150,8 +160,5 @@ async def download_file(filename: str):
 async def available_files():
     files = os.listdir(TEMP_DIR)
     return {"files": files}
-@app.get ("notifymessage")
-async def notify_message():
-    return {"message": "This is a notification message!"}
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

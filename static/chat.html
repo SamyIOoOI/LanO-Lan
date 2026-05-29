@@ -17,9 +17,10 @@
         <select id="files" name="Files"></select>
         <div class="downup">
             <button onclick="downloadFile()">Download</button>
+            <div id='indicatorstat' class="indicator" style="background-color: green;">Status</div>
             <button onclick="uploadFile()">Upload File</button>
         </div>
-        <h3 class="h3mob"">Currently Online</h3>
+        <h3 class="h3mob">Currently Online</h3>
         <div class="sidepanel">
             <h3 class="h3pc">Currently Online</h3>
             <ul id="online-users"></ul>
@@ -49,6 +50,11 @@
                         const newOption = new Option(filename, filename)
                         selectElement.add(newOption)
                         uploadsound()
+                        var messages = document.getElementById('messages')
+                        var message = document.createElement('li')
+                        message.innerHTML = "A new <span style='color: blue;'>File</span> was uploaded!"
+                        messages.appendChild(message)
+                        scrollDiv.scrollTop = scrollDiv.scrollHeight
                     } 
                     else if (event.data.startsWith("User_List:")) {
                         const users = JSON.parse(event.data.split(":")[1])
@@ -63,6 +69,19 @@
                             listItem.style.cursor = 'pointer'
                             onlineuserslist.appendChild(listItem)
                         })
+                    }
+                    else if (event.data.startsWith("Upload_Status")) {
+                        const uplstat = event.data.split(":")[1]
+                        const elem = document.getElementById('indicatorstat')
+                        if (uplstat == 'yellow') {
+                            elem.style.setProperty('background-color', 'yellow')
+                        }
+                        else if (uplstat == 'red') {
+                            elem.style.setProperty('background-color', 'red')
+                        }
+                        else {
+                            elem.style.setProperty('background-color', 'green')
+                        }
                     }
                     else {
                         var messages = document.getElementById('messages')
@@ -139,6 +158,9 @@
             function downloadsound() {
                 const audio5 = new Audio("/Settings/Sounds/download.wav");
                 audio5.play().catch(error => console.log(error));
+            }
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
         </script>
     </body>

@@ -11,3 +11,4 @@ for line in result.stdout.splitlines():
         mac = parts[3]
         Devices.append((ip, mac))
 
+
