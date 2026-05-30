@@ -126,12 +126,14 @@
                 })
             }
             function uploadFile() {
+                const special = confirm("Should this file persist in the server for the maximum duration of 7 hours? (else it'll only remain based on its size.)")
                 const input = document.createElement('input')
                 input.type = 'file'
                 input.accept = '*/*'
                 input.onchange = async function() {
                     const formData = new FormData()
                     formData.append('file', input.files[0])
+                    formData.append('special', special)
                     await fetch('/uploadfiles/', {
                         method: 'POST',
                         body: formData

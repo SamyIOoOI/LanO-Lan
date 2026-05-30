@@ -1,29 +1,30 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException, status, File, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException, status, UploadFile, Form
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 import os
 import json
 import bcrypt
 import aiofiles
-import time
-import subprocess
 import asyncio
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    os.makedirs(TEMP_DIR, exist_ok=True)
+    asyncio.ensure_future(cleanup_chore())
+    yield
+app = FastAPI(lifespan=lifespan)
 BASE_DIR = os.path.dirname(__file__)
 TEMP_DIR = os.path.join(os.getcwd(), "temp")
 SETTING_DIR = os.path.join(os.getcwd(), "Settings")
-Requests = []
-Halts = []
-Devices = []
 online_users = []
 ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
-upload_status = "green"
+upload_status = "green" ## Default upload status.
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 app.mount("/Settings", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "Settings")), name="Settings")
@@ -125,6 +126,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
     await manager.connect(websocket)
     online_users.append(user.username)
     await manager.broadcast(f"User_List:{json.dumps(online_users)}")
+    await manager.broadcast("Uploaded files will be automatically removed from the server storage based on their size and uploader's prompt response.")
     try:
         while True:
             data = await websocket.receive_text()
@@ -136,7 +138,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
         await manager.broadcast(f"User_List:{json.dumps(online_users)}")
         await manager.broadcast(f"{user.username} has left the chat")
 @app.post("/uploadfiles/")
-async def create_upload_files(file: list[UploadFile]):
+async def create_upload_files(file: list[UploadFile], special: bool = Form(False)):
     global upload_status
     for f in file:
         path = os.path.join(TEMP_DIR, f.filename)
@@ -152,6 +154,7 @@ async def create_upload_files(file: list[UploadFile]):
         await asyncio.sleep(2)
         upload_status = "green"
         await manager.broadcast(f"Upload_Status:{upload_status}")
+        asyncio.create_task(upload_tick(f.filename, special))
     return {"filenames": [f.filename for f in file]}
 @app.get("/download/{filename}")
 async def download_file(filename: str):
@@ -162,5 +165,81 @@ async def available_files():
     files = os.listdir(TEMP_DIR)
     return {"files": files}
 
+async def upload_tick(name: str, special: bool): ## Cleans up the temp directory
+    files = os.listdir(TEMP_DIR)
+    if name in files:
+        path = os.path.join(TEMP_DIR, name)
+        weight = os.path.getsize(path)
+        if not special:
+            if weight <= 1024 * 1024 * 20:
+                await manager.broadcast(f"File {name} will be removed from server storage in 10 minutes.")
+                await asyncio.sleep(600)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            elif weight <= 1024 * 1024 * 100:
+                await manager.broadcast(f"File {name} will be removed from server storage in 20 minutes.")
+                await asyncio.sleep(1200)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            elif weight <= 1024 * 1024 * 500:
+                await manager.broadcast(f"File {name} will be removed from server storage in 30 minutes.")
+                await asyncio.sleep(1800)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            elif weight <= 1024 * 1024 * 1024:
+                await manager.broadcast(f"File {name} will be removed from server storage in 60 minutes.")
+                await asyncio.sleep(3600)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            else:
+                await manager.broadcast(f"File {name} will be removed from server storage in 120 minutes.")
+                await asyncio.sleep(7200)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+        elif special:
+            await manager.broadcast(f"File {name} will be removed from server storage in 7 hours.")
+            await asyncio.sleep(25200)
+            os.remove(path)
+            await manager.broadcast(f"File {name} has been removed from server storage.")
+    else:
+        pass
+async def reverse_upload_tick(name: str, special: bool):
+    files = os.listdir(TEMP_DIR)
+    if name in files:
+        path = os.path.join(TEMP_DIR, name)
+        weight = os.path.getsize(path)
+        if not special:
+            if weight <= 1024 * 1024 * 20:
+                await asyncio.sleep(25200)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            elif weight <= 1024 * 1024 * 100:
+                await asyncio.sleep(25200)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            elif weight <= 1024 * 1024 * 500:
+                await asyncio.sleep(3600)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            elif weight <= 1024 * 1024 * 1024:
+                await asyncio.sleep(1800)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+            else:
+                await asyncio.sleep(1200)
+                os.remove(path)
+                await manager.broadcast(f"File {name} has been removed from server storage.")
+    else:
+        pass
+async def cleanup_chore():
+    if TEMP_DIR:
+        files = os.listdir(TEMP_DIR)
+        if files:
+            for file in files:
+                await reverse_upload_tick(file, False)
+        else:
+            pass
+    else:
+        pass
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
