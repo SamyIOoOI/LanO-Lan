@@ -3,3 +3,4 @@ append to users_db.json file ---> username and defaults
 ---> stores password (variable) ---> hashes ---> stores hash on file
 Or could be done via webform
 -- registery app must generate the certificates
+--
