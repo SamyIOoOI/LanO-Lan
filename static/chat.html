@@ -25,7 +25,36 @@
             <h3 class="h3pc">Currently Online</h3>
             <ul id="online-users"></ul>
         </div>
+        <div class="vcvid" id="vc">
+            <div class="audiocontrol">
+            <audio id="remote-audio" autoplay controls></audio>
+            </div>
+            <div class=mainvidbtn>
+            <div class="videobtn">
+            <button onclick="videobtn()">Toggle Video</button>
+            </div>
+            <div class="endcallbtn">
+            <button onclick="endcall()">End Call</button>
+            </div>
+            </div>
+            <div class="videos">
+            <div class="revideo">
+            <h4>Remote Video</h4>
+            <video id='remote-video' autoplay></video>
+            </div>
+            <div class="lovideo">
+            <h5>Local Video</h5>
+            <video id='local-video' autoplay muted style="display: none;"></video>
+            </div>
+            </div>
+        </div>
         <script>
+            document.getElementsByClassName('vcvid')[0].style.display = 'none'
+            let videoison = false
+            let localStream;
+            let camera;
+            let connection; 
+            let currentCall = null
             if (!sessionStorage.getItem('token')){
                 alert("You need to be logged in to access the chat!")
                 window.location.href = "/"
@@ -41,10 +70,10 @@
                 const info = await fetch('/info').then(r => r.json())
                 const ipv4 = info.ipv4
                 const port = info.port
-                ws = new WebSocket(`ws://${ipv4}:${port}/ws/${client_id}?token=${token}`);
+                ws = new WebSocket(`wss://${ipv4}:${port}/ws/${client_id}?token=${token}`);
                 repopulatefiles()
                 joinSound()
-                ws.onmessage = function(event) {
+                ws.onmessage = async function(event) {
                     if (event.data.startsWith("FILE_ADD:")) {
                         const filename = event.data.split(":")[1]
                         const newOption = new Option(filename, filename)
@@ -64,7 +93,7 @@
                             const listItem = document.createElement('li')
                             listItem.textContent = user
                             listItem.onclick = function() {
-                                alert(`Coming Soon!`)
+                                calluser(user)
                             }
                             listItem.style.cursor = 'pointer'
                             onlineuserslist.appendChild(listItem)
@@ -82,6 +111,75 @@
                         else {
                             elem.style.setProperty('background-color', 'green')
                         }
+                    }
+                    else if (event.data.startsWith("CALL_REQUEST:")) {
+                        const caller = event.data.split(":")[1]
+                        const response = confirm(`User ${caller} has invited you to a call. Connect?`)
+                        currentCall = caller
+                        if (response) {
+                            connection = new RTCPeerConnection({iceServers: []})
+                            await startAudio()
+                            ws.send(`CALL_ACCEPT:${caller}`)
+                            document.getElementsByClassName('vcvid')[0].style.display = 'flex'
+                            connection.onicecandidate = function(event) {
+                                if (event.candidate) {
+                                    ws.send(`ICE:${caller}:${JSON.stringify(event.candidate)}`)
+                                }
+                            }
+                            connection.ontrack = function(event) {
+                                if (event.track.kind === 'audio'){
+                                    document.getElementById('remote-audio').srcObject = event.streams[0]
+                                    document.getElementById('remote-audio').play().catch(error => console.log(error))
+                                }
+                                else if (event.track.kind === 'video') {
+                                    document.getElementById('remote-video').srcObject = event.streams[0]
+                                    document.getElementById('remote-video').style.display = 'block'
+                                    document.getElementById('remote-video').play().catch(error => console.log(error))
+                                }
+                            }
+                            }
+                        else {
+                            ws.send(`CALL_REJECT:${caller}`)
+                        }
+                        }
+                    else if (event.data.startsWith("CALL_REJECT:")) {
+                        document.getElementsByClassName('vcvid')[0].style.display = 'none'
+                        if (connection) {
+                        alert("Call Declined!")
+                        connection = null
+                        currentCall = null
+                    }
+                    }
+                    else if (event.data.startsWith("ICE:")) {
+                        const parts = event.data.split(":")
+                        const candidate = JSON.parse(parts.slice(2).join(":"))
+                        connection.addIceCandidate(candidate).catch(error => console.log(error))
+                    }
+                    else if (event.data.startsWith("CALL_ACCEPT:")) {
+                        const parts = event.data.split(":")
+                        const offer = await connection.createOffer()
+                        await connection.setLocalDescription(offer)
+                        ws.send(`OFFER:${parts[1]}:${JSON.stringify(offer)}`)
+                    }
+                    else if (event.data.startsWith("OFFER:")) {
+                        const parts = event.data.split(":")
+                        const from = parts[1]
+                        const offer = JSON.parse(event.data.split(":").slice(2).join(":"))
+                        await connection.setRemoteDescription(new RTCSessionDescription(offer))
+                        const answer = await connection.createAnswer()
+                        await connection.setLocalDescription(answer)
+                        ws.send(`ANSWER:${from}:${JSON.stringify(answer)}`)
+
+                    }
+                    else if (event.data.startsWith("ANSWER:")) {
+                        const parts = event.data.split(":")
+                        const from = parts[1]
+                        const answer = JSON.parse(event.data.split(":").slice(2).join(":"))
+                        await connection.setRemoteDescription(new RTCSessionDescription(answer))
+                    }
+                    else if (event.data.startsWith("CALL_END:")){
+                        alert("The call has been ended by the other user.")
+                        endcall2()
                     }
                     else {
                         var messages = document.getElementById('messages')
@@ -164,6 +262,96 @@
             }
             function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            async function calluser(username) {
+                currentCall = username
+                const config = {
+                    iceServers: []
+                }
+                connection = new RTCPeerConnection(config);
+                document.getElementsByClassName('vcvid')[0].style.display = 'flex'
+                await startAudio()
+                connection.onicecandidate = function(event) {
+                    if (event.candidate) {
+                        ws.send(`ICE:${username}:${JSON.stringify(event.candidate)}`)
+                    }
+                }
+                connection.ontrack = function(event) {
+                    if (event.track.kind === 'audio'){
+                    document.getElementById('remote-audio').srcObject = event.streams[0]
+                    document.getElementById('remote-audio').play().catch(error => console.log(error))
+                    }
+                    else if (event.track.kind === 'video') {
+                    document.getElementById('remote-video').srcObject = event.streams[0]
+                    document.getElementById('remote-video').style.display = 'block'
+                    document.getElementById('remote-video').play().catch(error => console.log(error))
+                    }
+                }
+                ws.send(`CALL_REQUEST:${username}`)
+                }
+            async function startAudio(){
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true});
+                localStream.getTracks().forEach(track => connection.addTrack(track, localStream));
+            }
+            async function videobtn() {
+                if (!videoison){
+                    const videostream = await navigator.mediaDevices.getUserMedia({video: true})
+                    camera = videostream.getVideoTracks()[0]
+                    connection.addTrack(camera, videostream)
+                    const offer = await connection.createOffer()
+                    await connection.setLocalDescription(offer)
+                    ws.send(`OFFER:${currentCall}:${JSON.stringify(offer)}`)
+                    document.getElementById('local-video').srcObject = videostream
+                    document.getElementById('local-video').style.display = 'block'
+                    videoison = true
+                }
+                else {
+                    connection.removeTrack(connection.getSenders().find(sender => sender.track === camera))
+                    camera.stop()
+                    document.getElementById('local-video').style.display = 'none'
+                    videoison = false
+                }
+            }
+            function endcall() {
+                if (connection) {
+                    connection.close()
+                    connection = null
+                }
+                if (localStream){
+                    localStream.getTracks().forEach(track => track.stop())
+                    localStream = null
+                }
+                if (camera) {
+                    camera.stop()
+                    camera = null
+                }
+                document.getElementById('remote-audio').srcObject = null
+                document.getElementById('remote-video').srcObject = null 
+                document.getElementById('local-video').srcObject = null
+                document.getElementsByClassName('vcvid')[0].style.display = 'none'
+                videoison = false
+                ws.send(`CALL_END:${currentCall}`)
+                currentCall = null
+            }
+            function endcall2() {
+                if (connection) {
+                    connection.close()
+                    connection = null
+                }
+                if (localStream){
+                    localStream.getTracks().forEach(track => track.stop())
+                    localStream = null
+                }
+                if (camera) {
+                    camera.stop()
+                    camera = null
+                }
+                document.getElementById('remote-audio').srcObject = null
+                document.getElementById('remote-video').srcObject = null 
+                document.getElementById('local-video').srcObject = null
+                document.getElementsByClassName('vcvid')[0].style.display = 'none'
+                videoison = false
+                currentCall = null
             }
         </script>
     </body>

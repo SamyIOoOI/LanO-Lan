@@ -11,41 +11,55 @@ import json
 import bcrypt
 import aiofiles
 import asyncio
-
+import subprocess
+import re
 BASE_DIR = os.path.dirname(__file__)
 TEMP_DIR = os.path.join(os.getcwd(), "temp")
 SETTING_DIR = os.path.join(os.getcwd(), "Settings")
 online_users = []
 ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
 upload_status = "green" ## Default upload status.
+max_wait_time = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["max_wait_time"] ## Max wait time for file deletion, in seconds. Default is 7200 (2 hours).
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global ipv4s
     os.makedirs(TEMP_DIR, exist_ok=True)
     asyncio.ensure_future(cleanup_chore())
+    ipv4s = await get_ipv4s()
     yield
 app = FastAPI(lifespan=lifespan)
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 app.mount("/Settings", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "Settings")), name="Settings")
-
+async def get_ipv4s(): ## Ignore it atp, I thought WebRTC would need it or something, I guess it can be later used to block certain ips?
+    try:
+        result = await asyncio.get_event_loop().run_in_executor(None, subprocess.check_output, ["arp", "-a"])
+        result = result.decode('utf-8', errors='ignore')
+        pattern = r"((?:\d{1,3}\.){3}\d{1,3})"
+        ipv4ss = re.findall(pattern, result)
+        ipv4s = set(ip for ip in ipv4ss if not ip.startswith(("224.", "239.", "255.")))
+        return list(ipv4s)
+    except Exception as e:
+        pass
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: list[WebSocket] = []
+        self.active_connections: dict[str, WebSocket] = {}
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, username: str):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        self.active_connections[username] = websocket
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
+    def disconnect(self, username: str):
+        self.active_connections.pop(username, None)
 
     async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
+        for ws in self.active_connections.values():
+            await ws.send_text(message)
+    async def send_private(self, username: str, message: str):
+        ws = self.active_connections.get(username)
+        if ws:
+            await ws.send_text(message)
 manager = ConnectionManager()
 ## Security
 with open(os.path.join(SETTING_DIR, "users_db.json")) as f:
@@ -123,17 +137,39 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
     if not user:
         await websocket.close(code=1008)
         return
-    await manager.connect(websocket)
+    await manager.connect(websocket, user.username)
     online_users.append(user.username)
     await manager.broadcast(f"User_List:{json.dumps(online_users)}")
-    await manager.broadcast("Uploaded files will be automatically removed from the server storage based on their size and uploader's prompt response.")
+    await manager.send_private(user.username, "Uploaded files will be automatically removed from the server storage based on their size and uploader's prompt response.")
     try:
         while True:
             data = await websocket.receive_text()
-            coded_message = f'<span style="color: lightgreen;">{user.username}:</span> {data}'
-            await manager.broadcast(coded_message)
+            if data.startswith("CALL_REQUEST:"):
+                destination = data.split(":")[1]
+                await manager.send_private(destination, f"CALL_REQUEST:{user.username}")
+            elif data.startswith("CALL_ACCEPT:"):
+                destination = data.split(":")[1]
+                await manager.send_private(destination, f"CALL_ACCEPT:{user.username}")
+            elif data.startswith("CALL_REJECT:"):
+                destination = data.split(":")[1]
+                await manager.send_private(destination, f"CALL_REJECT:{user.username}")
+            elif data.startswith("OFFER:"):
+                divided = data.split(":", 2)
+                await manager.send_private(divided[1], f"OFFER:{user.username}:{divided[2]}")
+            elif data.startswith("ANSWER:"):
+                divided = data.split(":", 2)
+                await manager.send_private(divided[1], f"ANSWER:{user.username}:{divided[2]}")
+            elif data.startswith("ICE:"):
+                divided = data.split(":", 2)
+                await manager.send_private(divided[1], f"ICE:{user.username}:{divided[2]}")
+            elif data.startswith("CALL_END:"):
+                destination = data.split(":")[1]
+                await manager.send_private(destination, f"CALL_END:{user.username}")
+            else:
+                coded_message = f'<span style="color: lightgreen;">{user.username}:</span> {data}'
+                await manager.broadcast(coded_message)
     except WebSocketDisconnect: 
-        manager.disconnect(websocket)
+        manager.disconnect(user.username)
         online_users.remove(user.username)
         await manager.broadcast(f"User_List:{json.dumps(online_users)}")
         await manager.broadcast(f"{user.username} has left the chat")
@@ -200,8 +236,8 @@ async def upload_tick(name: str, special: bool): ## Cleans up the temp directory
                 os.remove(path)
                 await manager.broadcast(f"File {name} has been removed from server storage.")
         elif special:
-            await manager.broadcast(f"File {name} will be removed from server storage in 7 hours.")
-            await asyncio.sleep(25200)
+            await manager.broadcast(f"File {name} will be removed from server storage after {max_wait_time // 3600} hours.")
+            await asyncio.sleep(max_wait_time)
             os.remove(path)
             await manager.broadcast(f"File {name} has been removed from server storage.")
     else:
@@ -213,7 +249,7 @@ async def reverse_upload_tick(name: str, special: bool):
         weight = os.path.getsize(path)
         if not special:
             if weight <= 1024 * 1024 * 20:
-                await asyncio.sleep(25200)
+                await asyncio.sleep(max_wait_time)
                 os.remove(path)
                 await manager.broadcast(f"File {name} has been removed from server storage.")
             elif weight <= 1024 * 1024 * 100:
@@ -244,5 +280,7 @@ async def cleanup_chore():
             pass
     else:
         pass
+ssl_cert = os.path.join(SETTING_DIR, "Certificates", "cert.pem")
+ssl_key = os.path.join(SETTING_DIR, "Certificates", "key.pem")
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, ssl_certfile=f"{ssl_cert}", ssl_keyfile=f"{ssl_key}")

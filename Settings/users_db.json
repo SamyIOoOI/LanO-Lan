@@ -2,5 +2,9 @@
     "user": {
         "username": "user",
         "hashed_password": "$2b$12$JyHReOPNxOaIQqq5bATeneG71mkUEgpFW6ejQ6DAO/LZ6zZOtuyNa"
+    },
+    "user2": {
+        "username": "user2",
+        "hashed_password": "$2b$12$JyHReOPNxOaIQqq5bATeneG71mkUEgpFW6ejQ6DAO/LZ6zZOtuyNa"
     }
 }

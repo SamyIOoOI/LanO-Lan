@@ -71,6 +71,13 @@ div.sidepanel {
         gap: 1px;
         flex-direction: row;
     }
+    div.vcvid{
+        margin-left: auto;
+        margin-right: auto;
+        width: calc(100% - 20vh);
+        max-width: 600px;
+        position: relative;
+    }
     input, button, select, .below {
     max-width: 200px;
     padding: 2px;
@@ -148,6 +155,65 @@ form{
         max-width: 400px !important;
         margin: 4px auto !important;
 }
+}
+div.vcvid{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}
+div.audiocontrol{
+    margin: 4px auto;
+}
+div.mainvidbtn{
+    display: flex;
+    flex-direction: row;
+}
+div.videobtn{
+    margin: 4px auto;
+}
+div.endcallbtn{
+    margin: 4px auto;
+}
+div.videos{
+    gap: 7px;
+    margin: 4px auto;
+}
+div.revideo{
+    margin: 4px auto;
+    border: 1px solid black;
+    width: 100%;
+    max-width: 400px;
+}
+div.revideo video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+div.revideo h4{
+    color: white;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+div.lovideo{
+    margin: 4px auto;
+    border: 1px solid black;
+    width: 100%;
+    max-width: 400px;
+}
+div.lovideo video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+div.lovideo h5{
+    color: white;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    font-size: 1.2rem;
 }
 ul{
     list-style-type: none;
