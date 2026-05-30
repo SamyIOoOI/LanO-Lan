@@ -12,6 +12,12 @@ import bcrypt
 import aiofiles
 import asyncio
 
+BASE_DIR = os.path.dirname(__file__)
+TEMP_DIR = os.path.join(os.getcwd(), "temp")
+SETTING_DIR = os.path.join(os.getcwd(), "Settings")
+online_users = []
+ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
+upload_status = "green" ## Default upload status.
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,12 +25,6 @@ async def lifespan(app: FastAPI):
     asyncio.ensure_future(cleanup_chore())
     yield
 app = FastAPI(lifespan=lifespan)
-BASE_DIR = os.path.dirname(__file__)
-TEMP_DIR = os.path.join(os.getcwd(), "temp")
-SETTING_DIR = os.path.join(os.getcwd(), "Settings")
-online_users = []
-ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
-upload_status = "green" ## Default upload status.
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 app.mount("/Settings", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "Settings")), name="Settings")
@@ -159,7 +159,10 @@ async def create_upload_files(file: list[UploadFile], special: bool = Form(False
 @app.get("/download/{filename}")
 async def download_file(filename: str):
     path = os.path.join(TEMP_DIR, filename)
-    return FileResponse(path, filename=filename)
+    if filename in os.listdir(TEMP_DIR):
+        return FileResponse(path, filename=filename)
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
 @app.get("/files")
 async def available_files():
     files = os.listdir(TEMP_DIR)

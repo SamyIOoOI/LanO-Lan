@@ -104,9 +104,9 @@
                 scrollDiv.scrollTop = scrollDiv.scrollHeight
                 cchatsound()
             }
-            function downloadFile(){
+            async function downloadFile(){
                 const filename = selectElement.value
-                repopulatefiles()
+                await repopulatefiles()
                 const fileok = Array.from(selectElement.options).some(option => option.value === filename)
                 if (fileok) {
                     downloadsound()
@@ -114,10 +114,11 @@
                 }
                 else {
                     alert('File was not found!')
+                    repopulatefiles()
                 }
             }
             function repopulatefiles(){
-                fetch('/files').then(r => r.json()).then(data => {
+                return fetch('/files').then(r => r.json()).then(data => {
                     selectElement.innerHTML = ''
                     data.files.forEach(file => {
                         const newOption = new Option(file, file)
