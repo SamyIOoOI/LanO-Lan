@@ -1,10 +1,14 @@
 {
     "user": {
         "username": "user",
-        "hashed_password": "$2b$12$JyHReOPNxOaIQqq5bATeneG71mkUEgpFW6ejQ6DAO/LZ6zZOtuyNa"
+        "hashed_password": "$2b$12$eaJAAcsn8dZRXSECXkv7NuBsn3u/Em4LgGNH7pWsF/x3Ywr3cQMHG"
     },
     "user2": {
         "username": "user2",
-        "hashed_password": "$2b$12$JyHReOPNxOaIQqq5bATeneG71mkUEgpFW6ejQ6DAO/LZ6zZOtuyNa"
+        "hashed_password": "$2b$12$SFdWihn3xhDb9G78asV3SeiGz0maTbRMtehDv2PFl9TS8ZxsEeywy"
+    },
+    "user7": {
+        "username": "user7",
+        "hashed_password": "$2b$12$QjcLO8o25jO6f9HaGqPk9OoCLysA6ronaQ/GAZtoqQRpSHlsucvCq"
     }
 }

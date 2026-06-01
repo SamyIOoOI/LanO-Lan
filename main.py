@@ -17,10 +17,11 @@ BASE_DIR = os.path.dirname(__file__)
 TEMP_DIR = os.path.join(os.getcwd(), "temp")
 SETTING_DIR = os.path.join(os.getcwd(), "Settings")
 online_users = []
-ipv4port = ["192.168.1.4", "8000"] ## Will be later changed by the Registery App.
 upload_status = "green" ## Default upload status.
 max_wait_time = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["max_wait_time"] ## Max wait time for file deletion, in seconds. Default is 7200 (2 hours).
-
+ipv4 = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["ipv4"] ## IPv4 address for the server.
+port = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["port"] 
+ipv4port = [ipv4, port]  ## Will be later changed by the Registery App.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global ipv4s
@@ -82,6 +83,8 @@ def get_user(db, username: str):
 
 
 def fake_decode_token(token):
+    with open(os.path.join(SETTING_DIR, "users_db.json")) as f:
+        users_db = json.load(f)
     user = get_user(users_db, token)
     return user
 
@@ -107,6 +110,8 @@ async def get_current_active_user(
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    with open(os.path.join(SETTING_DIR, "users_db.json")) as f:
+        users_db = json.load(f)
     user_dict = users_db.get(form_data.username)
     if not user_dict:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
