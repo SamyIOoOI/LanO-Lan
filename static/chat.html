@@ -224,12 +224,21 @@
                     })
                 })
             }
-            function uploadFile() {
+            async function uploadFile() {
                 const special = confirm("Should this file persist in server storage for the maximum duration?")
                 const input = document.createElement('input')
                 input.type = 'file'
                 input.accept = '*/*'
                 input.onchange = async function() {
+                    const file = input.files[0] 
+                    const filesizeMB = file.size / (1024 * 1024)
+                    const availablesize_fetch = await fetch('/available')
+                    const availablesize_json = await availablesize_fetch.json()
+                    const availablesize = availablesize_json.max_upload
+                    if (filesizeMB > availablesize) {
+                        alert("File too large! It exceeds the space available in the host server!");
+                        return;
+                    } 
                     const formData = new FormData()
                     formData.append('file', input.files[0])
                     formData.append('special', special)

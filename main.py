@@ -13,6 +13,7 @@ import aiofiles
 import asyncio
 import subprocess
 import re
+import shutil
 BASE_DIR = os.path.dirname(__file__)
 TEMP_DIR = os.path.join(os.getcwd(), "temp")
 SETTING_DIR = os.path.join(os.getcwd(), "Settings")
@@ -285,6 +286,12 @@ async def cleanup_chore():
             pass
     else:
         pass
+@app.get('/available')
+async def check_space():
+    total, used, free = shutil.disk_usage(TEMP_DIR)
+    max_upload = int(free) // (1024 * 1024)
+    return {'max_upload': max_upload}
+
 ssl_cert = os.path.join(SETTING_DIR, "Certificates", "cert.pem")
 ssl_key = os.path.join(SETTING_DIR, "Certificates", "key.pem")
 if __name__ == "__main__":
