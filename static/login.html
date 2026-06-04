@@ -2,8 +2,11 @@
 <html>
 <head><link rel="stylesheet" href="Settings/layout.css?v=<?php echo time(); ?>"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LanO'Lan</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="manifest" href="/site.webmanifest" />
 </head>
-<body>
+<body style="background-color: #BB010E;">
+    <img src="/static/banner.gif" alt="Lan O'Lan Logo">
     <h1>Login</h1>
     <form onsubmit="login(event)">
         <label for="username">Username:</label>
@@ -14,6 +17,9 @@
         <br>
         <button type="submit">Login</button>
     </form>
+    <footer class="footer">
+        Made by SamyIOoOI (Samy0_o) on github under MIT licence (2026-2027).
+    </footer>
     <script>
         async function login(event) {
             event.preventDefault();

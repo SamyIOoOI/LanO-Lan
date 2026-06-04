@@ -291,7 +291,9 @@ async def check_space():
     total, used, free = shutil.disk_usage(TEMP_DIR)
     max_upload = int(free) // (1024 * 1024)
     return {'max_upload': max_upload}
-
+@app.get('/favicon.ico')
+async def favicon():
+    return FileResponse(os.path.join(BASE_DIR, "static/favicon.ico"))
 ssl_cert = os.path.join(SETTING_DIR, "Certificates", "cert.pem")
 ssl_key = os.path.join(SETTING_DIR, "Certificates", "key.pem")
 if __name__ == "__main__":

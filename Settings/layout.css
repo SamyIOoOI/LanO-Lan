@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "Comic Relief";
-    src: url("/Settings/Fonts/ComicRelief.ttf") format("truetype");
+    font-family: "VT323-Regular";
+    src: url("/Settings/Fonts/VT323-Regular.ttf") format("truetype");
 }
 div.indicator{
     float: right;
@@ -112,12 +112,23 @@ body > * {
     margin: auto;
 }
 body{
-            background-color: firebrick;
+            background-color: #BB010E;
             margin: 0;
-            font-family: 'Comic Relief', cursive;
+            font-family: 'VT323-Regular', cursive;
             text-align: center;
             color: white;
             font-weight: 500;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1 0 auto;
+        }
+        .footer {
+         margin-top: 50px;
+         flex-shrink: 0;
+         max-width: 100%;
+         text-align: center;
         }
         h1{
             text-align: center;
