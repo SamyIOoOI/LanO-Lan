@@ -14,9 +14,15 @@ import asyncio
 import subprocess
 import re
 import shutil
-BASE_DIR = os.path.dirname(__file__)
-TEMP_DIR = os.path.join(os.getcwd(), "temp")
-SETTING_DIR = os.path.join(os.getcwd(), "Settings")
+import sys
+def the_base_dir_ugh():
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    else:
+        return os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = the_base_dir_ugh()
+TEMP_DIR = os.path.join(BASE_DIR, "temp")
+SETTING_DIR = os.path.join(BASE_DIR, "Settings")
 online_users = []
 upload_status = "green" ## Default upload status.
 max_wait_time = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["max_wait_time"] ## Max wait time for file deletion, in seconds. Default is 7200 (2 hours).
@@ -33,8 +39,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 os.makedirs(TEMP_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
-app.mount("/Settings", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "Settings")), name="Settings")
-async def get_ipv4s(): ## Ignore it atp, I thought WebRTC would need it or something, I guess it can be later used to block certain ips?
+app.mount("/Settings", StaticFiles(directory=os.path.join(BASE_DIR, "Settings")), name="Settings")
+async def get_ipv4s(): ## Ignore it atp, I thought WebRTC would need it or something, I guess it can be later used to block certain ips? -- nah... , maybe (blocking with macs should be better)
     try:
         result = await asyncio.get_event_loop().run_in_executor(None, subprocess.check_output, ["arp", "-a"])
         result = result.decode('utf-8', errors='ignore')
