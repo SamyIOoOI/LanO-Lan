@@ -59,7 +59,7 @@ exe_register = EXE(
     a_register.scripts,
     [],
     exclude_binaries=True,
-    name='LanO'Lan',
+    name="LanO'Lan",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
