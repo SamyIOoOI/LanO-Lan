@@ -20,7 +20,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='register',
+    name='LanO'Lan',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
