@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
     yield
 app = FastAPI(lifespan=lifespan)
 os.makedirs(TEMP_DIR, exist_ok=True)
-app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 app.mount("/Settings", StaticFiles(directory=os.path.join(BASE_DIR, "Settings")), name="Settings")
 async def get_ipv4s(): ## Ignore it atp, I thought WebRTC would need it or something, I guess it can be later used to block certain ips? -- nah... , maybe (blocking with macs should be better)
     try:
@@ -303,4 +303,4 @@ async def favicon():
 ssl_cert = os.path.join(SETTING_DIR, "Certificates", "cert.pem")
 ssl_key = os.path.join(SETTING_DIR, "Certificates", "key.pem")
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, ssl_certfile=f"{ssl_cert}", ssl_keyfile=f"{ssl_key}")
+    uvicorn.run(app, host="0.0.0.0", port=port, ssl_certfile=f"{ssl_cert}", ssl_keyfile=f"{ssl_key}")
