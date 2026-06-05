@@ -4,8 +4,7 @@ a_main = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('static', 'static'),      
-        ('templates', 'templates') 
+        ('static', 'static'),       
     ],
     hiddenimports=[],
     hookspath=[],
