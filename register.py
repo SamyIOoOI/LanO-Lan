@@ -16,13 +16,13 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 import datetime
 import ipaddress
 import bcrypt
+from os import path
 ## GUI Configuration & Styles
 gui = ThemedTk(theme="winxpblue")
 gui.title("LanO-Lan Configuration")
 gui.geometry("300x438")
 gui.resizable(False, False)
 gui.config(highlightbackground="black", highlightthickness=2)
-icon = tk.PhotoImage(file="2fixed32px.png")
 style = ttk.Style()
 style.theme_use('alt')
 style.configure('serveroff.TButton', background='red', foreground='white', font=('Comic Sans MS', 10, 'bold'))
@@ -31,6 +31,8 @@ style.configure('serveron.TButton', background='green', foreground='white', reli
 BASE_DIR = os.path.dirname(__file__)
 TEMP_DIR = os.path.join(os.getcwd(), "temp")
 SETTING_DIR = os.path.join(os.getcwd(), "Settings")
+iconpath = path.abspath(path.join(path.dirname(__file__), '2fixed32px.png'))
+icon = tk.PhotoImage(file=iconpath)
 service = None
 user = tk.StringVar()
 password = tk.StringVar()

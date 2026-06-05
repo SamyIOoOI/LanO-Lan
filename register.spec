@@ -1,11 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['register.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('2fixed32px.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -26,7 +25,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
+    console=False,  # Hide terminal
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
