@@ -51,7 +51,7 @@ ipv4_entry = tk.StringVar(value="Empty4AutoIPV4")
 def start_service():
     global service
     if os.path.exists(os.path.join(SETTING_DIR,"Certificates", "cert.pem")) and os.path.exists(os.path.join(SETTING_DIR,"Certificates", "key.pem")):
-        service = subprocess.Popen(['python', 'main.py'])
+        service = subprocess.Popen('server.exe')
     else:
         messagebox.showwarning("Certificates Not Found", "Kindly provide ceritficates cert.pem and key.pem in /Settings/Certificates or enable automatic certificate generation and click register at least once.")
 def close_service():
