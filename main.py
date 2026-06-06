@@ -27,7 +27,7 @@ online_users = []
 upload_status = "green" ## Default upload status.
 max_wait_time = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["max_wait_time"] ## Max wait time for file deletion, in seconds. Default is 7200 (2 hours).
 ipv4 = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["ipv4"] ## IPv4 address for the server.
-port = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["port"] 
+port = int(json.load(open(os.path.join(SETTING_DIR, "settings.json")))["port"]) 
 ipv4port = [ipv4, port]  ## Will be later changed by the Registery App.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
     yield
 app = FastAPI(lifespan=lifespan)
 os.makedirs(TEMP_DIR, exist_ok=True)
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 app.mount("/Settings", StaticFiles(directory=os.path.join(BASE_DIR, "Settings")), name="Settings")
 async def get_ipv4s(): ## Ignore it atp, I thought WebRTC would need it or something, I guess it can be later used to block certain ips? -- nah... , maybe (blocking with macs should be better)
     try:
