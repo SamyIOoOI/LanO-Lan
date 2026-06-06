@@ -43,6 +43,15 @@
 all you need is a LAN connection, a mobile hotspot without internet worked perfectly as shown in the video.*
 
 ----
+<h2>Deployment<h2>
+
+> For Windows users, download the latest release .zip file, extract and run LanO'Lan.exe for GUI, or LoLServer.exe to directly start the server.
+
+> For Linux users, download the latest release .zip file, open terminal, cd [path to folder extracted], ./LanO'Lan (if it returns an error rename the file to LanOLan and retry) for GUI, and the same for LoLServer.
+
+> For Source-Code deployment, clone repository, pip install -r requirements.txt. Afterwards simply run register.py for GUI, and main.py for server only.
+
+
 <h2>Mind Map</h2>  
 
 ***These are candidates for next updates or new features not yet implemented.***
@@ -54,13 +63,6 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 * Simple games such as tic tac toe (P2P)
 * Private direct messages
 
-<h2>Deployment<h2>
-
-> For Windows users, download the latest release .zip file, extract and run LanO'Lan.exe for GUI, or LoLServer.exe to directly start the server.
-
-> For Linux users, download the latest release .zip file, open terminal, cd [path to folder extracted], ./LanO'Lan (if it returns an error rename the file to LanOLan and retry) for GUI, and the same for LoLServer.
-
-> For Source-Code deployment, clone repository, pip install -r requirements.txt. Afterwards simply run register.py for GUI, and main.py for server only.
 
 <h2>Notice</h2>
 
