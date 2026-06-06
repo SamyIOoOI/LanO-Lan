@@ -62,7 +62,7 @@ def start_service():
         else:
             service = subprocess.Popen(["./LoLServer"])
     else:
-        messagebox.showwarning("Certificates Not Found", "Kindly provide ceritficates cert.pem and key.pem in /Settings/Certificates or enable automatic certificate generation and click register at least once.")
+        messagebox.showwarning("Certificates Not Found", "Kindly provide ceritficates cert.pem and key.pem in /Settings/Certificates or enable automatic certificate generation and click register at least once. You must register users atleast once.")
 def close_service():
     global service
     parentservice = psutil.Process(service.pid)

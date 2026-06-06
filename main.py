@@ -139,10 +139,10 @@ async def read_users_me(
     return current_user
 @app.get("/")
 async def get_login():
-    return FileResponse(os.path.join(BASE_DIR, "static/login.html"))
+    return FileResponse(os.path.join(os.path.dirname(__file__), "static/login.html"))
 @app.get("/chat")   
 async def get_chat():
-    return FileResponse(os.path.join(BASE_DIR, "static/chat.html"))
+    return FileResponse(os.path.join(os.path.dirname(__file__), "static/chat.html"))
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str, token: str):
     user = fake_decode_token(token)
@@ -299,7 +299,7 @@ async def check_space():
     return {'max_upload': max_upload}
 @app.get('/favicon.ico')
 async def favicon():
-    return FileResponse(os.path.join(BASE_DIR, "static/favicon.ico"))
+    return FileResponse(os.path.join(os.path.dirname(__file__), "static/favicon.ico"))
 ssl_cert = os.path.join(SETTING_DIR, "Certificates", "cert.pem")
 ssl_key = os.path.join(SETTING_DIR, "Certificates", "key.pem")
 if __name__ == "__main__":
