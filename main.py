@@ -26,7 +26,7 @@ SETTING_DIR = os.path.join(BASE_DIR, "Settings")
 online_users = []
 upload_status = "green" ## Default upload status.
 max_wait_time = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["max_wait_time"] ## Max wait time for file deletion, in seconds. Default is 7200 (2 hours).
-ipv4 = json.load(open(os.path.join(SETTING_DIR, "settings.json")))["ipv4"] ## IPv4 address for the server.
+ipv4 = str(json.load(open(os.path.join(SETTING_DIR, "settings.json")))["ipv4"]) ## IPv4 address for the server.
 port = int(json.load(open(os.path.join(SETTING_DIR, "settings.json")))["port"]) 
 ipv4port = [ipv4, port]  ## Will be later changed by the Registery App.
 @asynccontextmanager
