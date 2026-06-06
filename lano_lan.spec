@@ -41,7 +41,7 @@ exe_main = EXE(
     a_main.scripts,
     [],
     exclude_binaries=True,
-    name='lanolanserver',
+    name="lano'lanserver",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

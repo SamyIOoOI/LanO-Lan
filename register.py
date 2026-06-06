@@ -54,9 +54,9 @@ def start_service():
     os_type = sys.platform
     if os.path.exists(os.path.join(SETTING_DIR,"Certificates", "cert.pem")) and os.path.exists(os.path.join(SETTING_DIR,"Certificates", "key.pem")):
         if os_type == 'win32':
-            service = subprocess.Popen(['server.exe'])
+            service = subprocess.Popen(["lano'lanserver.exe"])
         else:
-            service = subprocess.Popen(['./server'])
+            service = subprocess.Popen(["./lano'lanserver"])
     else:
         messagebox.showwarning("Certificates Not Found", "Kindly provide ceritficates cert.pem and key.pem in /Settings/Certificates or enable automatic certificate generation and click register at least once.")
 def close_service():
