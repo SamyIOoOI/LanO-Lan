@@ -1,6 +1,6 @@
 ## libraries & Dependencies
 from tkinter import *
-from tkinter import Tk, messagebox
+from tkinter import messagebox
 import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedTk
@@ -16,6 +16,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 import datetime
 import ipaddress
 import bcrypt
+import sys
 from os import path
 ## GUI Configuration & Styles
 gui = ThemedTk(theme="winxpblue")
@@ -29,8 +30,8 @@ style.configure('serveroff.TButton', background='red', foreground='white', font=
 style.configure('serveron.TButton', background='green', foreground='white', relief='sunken', font=('Comic Sans MS', 10, 'bold'))
 ## Global Variables
 BASE_DIR = os.path.dirname(__file__)
-TEMP_DIR = os.path.join(os.getcwd(), "temp")
-SETTING_DIR = os.path.join(os.getcwd(), "Settings")
+TEMP_DIR = os.path.join(BASE_DIR, "temp")
+SETTING_DIR = os.path.join(BASE_DIR, "Settings")
 iconpath = path.abspath(path.join(path.dirname(__file__), '2fixed32px.png'))
 icon = tk.PhotoImage(file=iconpath)
 service = None
@@ -50,8 +51,12 @@ ipv4_entry = tk.StringVar(value="Empty4AutoIPV4")
 ## Functions
 def start_service():
     global service
+    os_type = sys.platform
     if os.path.exists(os.path.join(SETTING_DIR,"Certificates", "cert.pem")) and os.path.exists(os.path.join(SETTING_DIR,"Certificates", "key.pem")):
-        service = subprocess.Popen('server.exe')
+        if os_type == 'win32':
+            service = subprocess.Popen(['server.exe'])
+        else:
+            service = subprocess.Popen(['./server'])
     else:
         messagebox.showwarning("Certificates Not Found", "Kindly provide ceritficates cert.pem and key.pem in /Settings/Certificates or enable automatic certificate generation and click register at least once.")
 def close_service():
