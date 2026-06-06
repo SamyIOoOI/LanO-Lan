@@ -29,9 +29,13 @@ style.theme_use('alt')
 style.configure('serveroff.TButton', background='red', foreground='white', font=('Comic Sans MS', 10, 'bold'))
 style.configure('serveron.TButton', background='green', foreground='white', relief='sunken', font=('Comic Sans MS', 10, 'bold'))
 ## Global Variables
+if getattr(sys, 'frozen', False):
+    SETTING_DIR = os.path.join(os.path.dirname(sys.executable), "Settings")
+    TEMP_DIR = os.path.join(os.path.dirname(sys.executable), "temp")
+else:
+    SETTING_DIR = os.path.join(os.path.dirname(__file__), "Settings")
+    TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp")
 BASE_DIR = os.path.dirname(__file__)
-TEMP_DIR = os.path.join(BASE_DIR, "temp")
-SETTING_DIR = os.path.join(BASE_DIR, "Settings")
 iconpath = path.abspath(path.join(path.dirname(__file__), '2fixed32px.png'))
 icon = tk.PhotoImage(file=iconpath)
 service = None
