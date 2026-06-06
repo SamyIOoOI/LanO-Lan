@@ -54,6 +54,8 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 > For users running debian-based distributions that may separate tkinter as its own package, install it with the following command. sudo apt install python3-tk && sudo apt install python3-ttkthemes
  (debian), sudo dnf install python3-tkinter && sudo dnf install python3-ttkthemes (Fedora/RHEL), sudo pacman -S tk && yay -S ttk-themes-chooser (Arch)
 
+> In case you cannot launch the server due to the port being used, check for LoLServer process using taskmanager or terminal commands and terminate it. If the port is used by another application you can modify it in Settings/settings.json.
+
 <h2>Mind Map</h2>  
 
 ***These are candidates for next updates or new features not yet implemented.***
