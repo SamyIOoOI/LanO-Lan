@@ -41,7 +41,7 @@ exe_main = EXE(
     a_main.scripts,
     [],
     exclude_binaries=True,
-    name="lano'lanserver",
+    name="LoLServer",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -52,7 +52,7 @@ exe_main = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.ico',
+    icon='server_icon.ico',
 )
 exe_register = EXE(
     pyz_register,
