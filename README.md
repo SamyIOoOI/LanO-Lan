@@ -47,10 +47,12 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 
 > For Windows users, download the latest release .zip file, extract and run LanO'Lan.exe for GUI, or LoLServer.exe to directly start the server.
 
-> For Linux users, download the latest release .zip file, open terminal, cd [path to folder extracted], ./LanO'Lan (if it returns an error rename the file to LanOLan and retry) for GUI, and the same for LoLServer. For users running debian-based distributions that may separate tkinter as its own package, install it with the following command. sudo apt install python3-tk (debian), sudo dnf install python3-tkinter (Fedora/RHEL), sudo pacman -S tk (Arch)
+> For Linux users, download the latest release .zip file, open terminal, cd [path to folder extracted], ./LanO'Lan (if it returns an error rename the file to LanOLan and retry) for GUI, and the same for LoLServer.
 
 > For Source-Code deployment, clone repository, pip install -r requirements.txt. Afterwards simply run register.py for GUI, and main.py for server only.
 
+> For users running debian-based distributions that may separate tkinter as its own package, install it with the following command. sudo apt install python3-tk && sudo apt install python3-ttkthemes
+ (debian), sudo dnf install python3-tkinter && sudo dnf install python3-ttkthemes (Fedora/RHEL), sudo pacman -S tk && yay -S ttk-themes-chooser (Arch)
 
 <h2>Mind Map</h2>  
 
