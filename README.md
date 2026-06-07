@@ -6,6 +6,8 @@
 <div align="center"><h1>Lan O' Lan</h1>
 </div>
 
+<a>
+<img src="https://youtube.com" alt="Watch the ShowCase Video" width="800" height="auto">https://www.youtube.com/watch?v=6wNBrC6rXBM</a>
 
 ***Need a Lan-Based messaging and file sharing utility but they're all a decade old and barely work? Got tired of searching in overly outdated websites? I've been there. LanO'Lan was my solution, available for anyone, available everywhere. Open-Source for all of us.***
 
@@ -82,6 +84,8 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 * Dark Mode (self explanatory)
 * Simple games such as tic tac toe (P2P)
 * Private direct messages
+* MacOS & Android Release (switch to linux already)
+* Client App Variants for Windows/Linux/MacOS/Android
 
 
 <h2>Notice</h2>
