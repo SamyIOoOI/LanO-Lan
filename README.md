@@ -51,7 +51,7 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 
 > For Source-Code deployment, clone repository, pip install -r requirements.txt. Afterwards simply run register.py for GUI, and main.py for server only.
 
-> For users running debian-based distributions that may separate tkinter as its own package, install it with the following command. sudo apt install python3-tk && sudo apt install python3-ttkthemes
+> For users running debian-based distributions that may separate tkinter as its own package or may have errors with the package, install it with the following command. sudo apt install python3-tk && sudo apt install python3-ttkthemes
  (debian), sudo dnf install python3-tkinter && sudo dnf install python3-ttkthemes (Fedora/RHEL), sudo pacman -S tk && yay -S ttk-themes-chooser (Arch)
 
 > In case you cannot launch the server due to the port being used, check for LoLServer process using taskmanager or terminal commands and terminate it. If the port is used by another application you can modify it in Settings/settings.json.
