@@ -9,9 +9,7 @@
 <div align="center"><h1>Lan O' Lan</h1>
 </div>
 
-<a href="https://www.youtube.com/watch?v=6wNBrC6rXBM" target="_blank">
-<img src="thumb.png" alt="Watch the ShowCase Video on Youtube">
-</a>
+[![Watch the demo](thumb.png)](https://www.youtube.com/watch?v=6wNBrC6rXBM)
 
 ***Need a Lan-Based messaging and file sharing utility but they're all a decade old and barely work? Got tired of searching in overly outdated websites? I've been there. LanO'Lan was my solution, available for anyone, available everywhere. Open-Source for all of us.***
 
