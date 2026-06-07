@@ -208,7 +208,12 @@
                 cchatsound()
             }
             async function downloadFile(){
-                const filename = selectElement.value
+                const selectedDownloadIndex = selectElement.selectedIndex
+                if (selectedDownloadIndex === -1){
+                    alert('No File Selected!')
+                    return
+                }
+                const filename = selectElement.options[selectedDownloadIndex].value
                 if (!filename){
                     alert('File does not exist!')
                     return
