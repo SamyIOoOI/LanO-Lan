@@ -27,10 +27,26 @@
 * Global text chat.
 
 * Voice Chat (P2P).
-
+  
 * Video chat (P2P).
 
-* File Upload/Download. 
+* Call Acceptance/Rejection Handling
+  
+* End Call Functionality (Automatically clears video input/output)
+
+* File Upload/Download.
+
+* File Upload/Download Status Indicator (green: free, yellow: uploading, red: uploaded)
+
+* Automatic Server Storage Optimization (with an override option extended via /Settings).
+
+* Automatic SSL Certificate Generation
+
+* Automatic IPV4 Discovery
+
+* Customizable Font, SoundEffects and Port via /Settings/
+
+* Global Server Broadcasts for Joins/Leaves/Uploads/Deletions
 
 *Note: Mobile clients get "upload pictures or videos" prompt, ignore it, any type of file can be uploaded via your files application.*
 
