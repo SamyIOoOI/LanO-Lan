@@ -1,7 +1,10 @@
 ------------------------------------
 
+<div align="center">
 
-![alt text](<LanO'Lan Banner.gif>)
+![alt text](<LanO'Lan Banner.gif>) 
+</div>
+
 -------------------------------------------
 <div align="center"><h1>Lan O' Lan</h1>
 </div>
