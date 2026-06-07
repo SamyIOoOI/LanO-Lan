@@ -22,15 +22,31 @@
 ----------------
 <h2>Features</h2>
 
-* Clients have access (as of version 1.0.0) to the following: 
+* Clients have access (as of version 1.0.1) to the following: 
 
 * Global text chat.
 
 * Voice Chat (P2P).
-
+  
 * Video chat (P2P).
 
-* File Upload/Download. 
+* Call Acceptance/Rejection Handling
+  
+* End Call Functionality (Automatically clears video input/output)
+
+* File Upload/Download.
+
+* File Upload/Download Status Indicator (green: free, yellow: uploading, red: uploaded)
+
+* Automatic Server Storage Optimization (with an override option extended via /Settings).
+
+* Automatic SSL Certificate Generation
+
+* Automatic IPV4 Discovery
+
+* Customizable Font, SoundEffects and Port via /Settings/
+
+* Global Server Broadcasts for Joins/Leaves/Uploads/Deletions
 
 *Note: Mobile clients get "upload pictures or videos" prompt, ignore it, any type of file can be uploaded via your files application.*
 
@@ -51,7 +67,7 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 
 > For Source-Code deployment, clone repository, pip install -r requirements.txt. Afterwards simply run register.py for GUI, and main.py for server only.
 
-> For users running debian-based distributions that may separate tkinter as its own package, install it with the following command. sudo apt install python3-tk && sudo apt install python3-ttkthemes
+> For users running debian-based distributions that may separate tkinter as its own package or may have errors with the package, install it with the following command. sudo apt install python3-tk && sudo apt install python3-ttkthemes
  (debian), sudo dnf install python3-tkinter && sudo dnf install python3-ttkthemes (Fedora/RHEL), sudo pacman -S tk && yay -S ttk-themes-chooser (Arch)
 
 > In case you cannot launch the server due to the port being used, check for LoLServer process using taskmanager or terminal commands and terminate it. If the port is used by another application you can modify it in Settings/settings.json.
