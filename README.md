@@ -22,7 +22,7 @@
 ----------------
 <h2>Features</h2>
 
-* Clients have access (as of version 1.0.0) to the following: 
+* Clients have access (as of version 1.0.1) to the following: 
 
 * Global text chat.
 
