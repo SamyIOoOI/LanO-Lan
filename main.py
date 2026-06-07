@@ -303,4 +303,4 @@ async def favicon():
 ssl_cert = os.path.join(SETTING_DIR, "Certificates", "cert.pem")
 ssl_key = os.path.join(SETTING_DIR, "Certificates", "key.pem")
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=port, ssl_certfile=f"{ssl_cert}", ssl_keyfile=f"{ssl_key}")
+    uvicorn.run(app, host="0.0.0.0", port=port, loop="asyncio", ssl_certfile=f"{ssl_cert}", ssl_keyfile=f"{ssl_key}")
