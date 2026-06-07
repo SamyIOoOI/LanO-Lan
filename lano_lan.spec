@@ -1,4 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
+
+from PyInstaller.utils.hooks import collect_data_files
+
+ttkthemes_datas = collect_data_files("ttkthemes")
+
 a_main = Analysis(
     ['main.py'],
     pathex=[],
@@ -6,7 +11,7 @@ a_main = Analysis(
     datas=[
         ('static', 'static'),       
     ],
-    hiddenimports=[],
+    hiddenimports=['websockets', 'uvicorn.logging', 'uvicorn.loops', 'uvicorn.loops.auto', 'uvicorn.protocols', 'uvicorn.protocols.http', 'uvicorn.protocols.http.auto', 'uvicorn.protocols.websockets', 'uvicorn.protocols.websockets.auto', 'uvicorn.lifespan', 'uvicorn.lifespan.on', 'websockets.legacy.server', 'websockets.legacy.client'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -21,8 +26,8 @@ a_register = Analysis(
     binaries=[],
     datas=[
         ('2fixed32px.png', '.')
-    ],
-    hiddenimports=[],
+    ] + ttkthemes_datas,
+    hiddenimports=['tkinter', 'ttkthemes'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
