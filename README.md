@@ -6,7 +6,7 @@
 <div align="center"><h1>Lan O' Lan</h1>
 </div>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/6wNBrC6rXBM?si=9cEWF7P-hml7dm29" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Watch the demo](thumb.png)](https://www.youtube.com/watch?v=6wNBrC6rXBM)
 
 ***Need a Lan-Based messaging and file sharing utility but they're all a decade old and barely work? Got tired of searching in overly outdated websites? I've been there. LanO'Lan was my solution, available for anyone, available everywhere. Open-Source for all of us.***
 
