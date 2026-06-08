@@ -88,6 +88,8 @@ all you need is a LAN connection, a mobile hotspot without internet worked perfe
 * Private direct messages
 * MacOS & Android Release (switch to linux already)
 * Client App Variants for Windows/Linux/MacOS/Android
+* Chat Image Preview
+* Uploaded File overlay (replaces the file upload message)
 
 
 <h2>Notice</h2>
