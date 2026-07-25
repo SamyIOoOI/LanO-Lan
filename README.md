@@ -107,4 +107,4 @@ SOFTWARE.
 
 -----------------
 
-Made by Samy0_o (SamyIOoOI) on github (2026-2027) Under MIT Licence.
+Made by Samy0_o (SamyIOoOI) on github (2026-2027) Under ~MIT~ GPLv3 Licence.
